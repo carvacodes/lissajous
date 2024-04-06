@@ -7,7 +7,7 @@ const ctx = c.getContext('2d');
 
 // set up canvas
 c.width = c.height = _l;
-let ghostingIntensity = 0.033;  // between 0 and 1, incl. Closer to 0 = more ghosting
+let fadeIntensity = 0;  // between 0 and 1, incl. Closer to 0 = more ghosting. Closer to 1 = more fading.
 
 // set up global lissa settings
 /**************************************************************/
@@ -15,7 +15,7 @@ let ghostingIntensity = 0.033;  // between 0 and 1, incl. Closer to 0 = more gho
 /**************************************************************/
 let lissaNum = 15;   // total number of lissajous curves to show; gets pretty crowded over 15
 let lissaPadding = 6;   // padding between each curve
-let lissaDotSize = 2; // the size of the dot tracing each curve
+let lissaDotSize = 1; // the size of the dot tracing each curve
 
 /* these should be left alone, since their values are important (and also derived) */
 let lissaSize = _l / lissaNum;
@@ -41,9 +41,9 @@ function Lissa(xFactor, yFactor) {
     lastY: this.origin.y
   };
   // color variables
-  this.rComp = Math.round(Math.random() * 155) + 100;
-  this.gComp = Math.round(Math.random() * 155) + 100;
-  this.bComp = Math.round(Math.random() * 155) + 100;
+  this.rComp = 100 + (155 / (c.width / this.origin.x));
+  this.gComp = 100 + (155 / (((c.width / this.origin.x)) / (c.height / this.origin.y)));
+  this.bComp = 100 + (155 / (c.height / this.origin.y));
   this.color = 'rgb(' + this.rComp + ',' + this.gComp + ',' + this.bComp + ')';
 }
 
@@ -73,17 +73,35 @@ Lissa.prototype.draw = function(){
 // clears the frame to a specified level of opacity, a float between 0 and 1, inclusive
 function clearFrame(opacity) {
   if (!isNaN(opacity)) {  // checking if the opacity variable is a number; because, why not?
-    ctx.fillStyle = 'rgba(12,4,20,' + opacity + ')';
+    ctx.fillStyle = 'rgba(0,0,0,' + opacity + ')';
   } else {
     return false;
   }
   ctx.fillRect(0, 0, _l, _l);
 };
 
+let ghostingFading = false;
+
 // animation function
 function animate() {
-  lissaTimer = lissaTimer >= 2 * Math.PI ? 0 : lissaTimer + (Math.PI / 360); // resets the timer to 0 once a rotation of 2pi is complete
-  clearFrame(ghostingIntensity);
+  // lissaTimer = lissaTimer >= 2 * Math.PI ? 0 : lissaTimer + (Math.PI / 360); // resets the timer to 0 once a rotation of 2pi is complete
+
+  if (lissaTimer >= 2 * Math.PI) {
+    lissaTimer = 0;
+    if (!ghostingFading) {
+        ghostingFading = true;
+    } else {
+        ghostingFading = false;
+        fadeIntensity = 0;
+    }
+  } else {
+    lissaTimer += (Math.PI / 720);
+    if (ghostingFading) {
+        fadeIntensity += 0.0001;
+    }
+  }
+
+  clearFrame(fadeIntensity);
   lissas.forEach(function(lissa){
     lissa.updateDot();
     lissa.draw();
