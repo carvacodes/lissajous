@@ -2,27 +2,27 @@
 const _w = window.innerWidth;
 const _h = window.innerHeight;
 const _l = Math.min(_w, _h);  // side length, the smaller of window width/height
-const c = document.getElementById('canv');
-const ctx = c.getContext('2d');
 
 // set up canvas
+const c = document.getElementById('canv');
+const ctx = c.getContext('2d');
 c.width = c.height = _l;
-let fadeIntensity = 0;  // between 0 and 1, incl. Closer to 0 = more ghosting. Closer to 1 = more fading.
+
 
 // set up global lissa settings
-/**************************************************************/
-/* if you want to play around with stuff, try altering these: */
-/**************************************************************/
-let lissaNum = 15;   // total number of lissajous curves to show; gets pretty crowded over 15
+let lissaNum = 5 + (Math.round(_l / 100));   // total number of lissajous curves to show
+let sizeRatio = (lissaNum / 16); // this ratio will affect the size of the grid, animation speed, and dot size depending on screen real estate
+let fadeIntensity = 0;  // between 0 and 1, incl. Closer to 0 = more ghosting. Closer to 1 = more fading.
+let lissaDotSize = 1.25 * sizeRatio; // the size of the dot tracing each curve
 let lissaPadding = 6;   // padding between each curve
-let lissaDotSize = 1; // the size of the dot tracing each curve
 
-/* these should be left alone, since their values are important (and also derived) */
+/* these should be left alone, since their values are derived */
 let lissaSize = _l / lissaNum;
 let lissaDi = lissaSize - lissaPadding;
 let lissaRad = lissaDi / 2;
 let lissaTimer = 0;
 let lissas = [];
+let updateSpeed = (Math.PI / 300) / sizeRatio;
 
 // set up lissa prototype
 function Lissa(xFactor, yFactor) {
@@ -66,7 +66,9 @@ Lissa.prototype.draw = function(){
   ctx.stroke();
   ctx.closePath();
   /*
-  using lineTo between the previous/current dot positions ended up being a more satisfying effect than using the arc() drawing method, since the line you trace ends up being continuous. at higher speeds, the dots begin to break apart, resulting in a [more] pixelated lissajous
+  using lineTo between the previous/current dot positions ended up being a more satisfying 
+  effect than using the arc() drawing method, since the line you trace ends up being continuous.
+  with arc, at higher speeds, the dots begin to break apart, resulting in a more pixelated curve
   */
 };
 
@@ -81,11 +83,21 @@ function clearFrame(opacity) {
 };
 
 let ghostingFading = false;
+let lastFrameTime = Date.now();
 
 // animation function
 function animate() {
   // lissaTimer = lissaTimer >= 2 * Math.PI ? 0 : lissaTimer + (Math.PI / 360); // resets the timer to 0 once a rotation of 2pi is complete
 
+  // lock the animation to 60fps
+  let animTime = Date.now();
+  if (animTime - lastFrameTime <= 16) {
+    window.requestAnimationFrame(animate);
+    return;
+  } else {
+    lastFrameTime = animTime;
+  }
+  
   if (lissaTimer >= 2 * Math.PI) {
     lissaTimer = 0;
     if (!ghostingFading) {
@@ -95,7 +107,7 @@ function animate() {
         fadeIntensity = 0;
     }
   } else {
-    lissaTimer += (Math.PI / 720);
+    lissaTimer += (updateSpeed);
     if (ghostingFading) {
         fadeIntensity += 0.0001;
     }
