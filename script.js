@@ -94,9 +94,9 @@ function animate() {
   if (animTime - lastFrameTime <= 16) {
     window.requestAnimationFrame(animate);
     return;
-  } else {
-    lastFrameTime = animTime;
   }
+  
+  lastFrameTime = animTime;
   
   if (lissaTimer >= 2 * Math.PI) {
     lissaTimer = 0;
