@@ -10,4 +10,7 @@ body {
   height: 100vh;
 }
 
-/*# sourceMappingURL=style.css.map */
+canvas {
+  height: 100%;
+  width: 100vw;
+}
