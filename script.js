@@ -28,11 +28,11 @@ window.addEventListener('load', ()=>{
   /*                                           */
   /*********************************************/
   // set up global lissa settings
-  let lissaNum = 5 + (Math.round(_l / 100)) / window.devicePixelRatio;   // total number of lissajous curves to show
+  let lissaNum = 5 + Math.floor((_l / 100) / window.devicePixelRatio);   // total number of lissajous curves to show
   let sizeRatio = (lissaNum / 16); // this ratio will affect the size of the grid, animation speed, and dot size depending on screen real estate
   let fadeIntensity = 0;  // between 0 and 1, incl. Closer to 0 = more ghosting. Closer to 1 = more fading.
   let lissaDotSize = 1.25 * sizeRatio * window.devicePixelRatio; // the size of the dot tracing each curve
-  let lissaPadding = 6 * window.devicePixelRatio;   // padding between each curve
+  let lissaPadding = 5 * window.devicePixelRatio;   // padding between each curve
 
   /* these should be left alone, since their values are derived */
   let lissaSize = _l / lissaNum;
