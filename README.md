@@ -1,5 +1,7 @@
 # Lissajous Patterns
 
+[View the project on carvacodes.github.io](https://carvacodes.github.io/?project=lissajous).
+
 In this demo, an animated grid of [lissajous curves](https://en.wikipedia.org/wiki/Lissajous_curve) are drawn to an HTML canvas using vanilla JavaScript.
 
 Each curve has a point (a "dot") associated with it that draws a piece of its curve on every window animation frame (via `window.requestAnimationFrame`). The farther right or farther down each grid square is, the faster its dot's X or Y coordinate (respectively) moves. Setting the HTML `<canvas>` element's `fadeIntensity` value to 0 initially allows the user to see the geometry of the curves as they relate to one another, and neatly visualizes how changing the X or Y oscillation speed changes the resulting graph.
